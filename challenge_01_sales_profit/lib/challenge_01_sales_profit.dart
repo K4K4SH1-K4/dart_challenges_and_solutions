@@ -1,74 +1,94 @@
 import 'package:challenge_01_sales_profit/functions.dart';
 
-String profit = "Profitable";
-
 class Business {
   Business({
-    required this._businessName,
-    required this._productName,
-    required this._purchasingPrice,
-    required this._quantityBought,
-    required this._quantitySold,
-    required this._sellingPrice,
-    required this._discount,
-  });
-
-  final String _businessName;
-  final String _productName;
-  final double _sellingPrice;
-  final double _purchasingPrice;
-  final int _quantityBought;
-  final int _quantitySold;
-  final double _discount;
-
-  double get totalCost => _quantityBought * _purchasingPrice;
-
-  double get salesRevenue {
-    if (_sellingPrice < 0 ||
-        _quantityBought < 0 ||
-        _quantitySold < 0 ||
-        _purchasingPrice < 0) {
-      print(
-        "We can't have -ve for selling price, quantity bought or purchasing price",
+    required String businessName,
+    required String productName,
+    required double sellingPrice,
+    required double purchasingPrice,
+    required int quantitySold,
+    required int quantityBought,
+    required double discount,
+  }) {
+    _businessName = businessName;
+    _productName = productName;
+    //Validation before object contruction
+    //Dart's throw ArgumentError(...) is a standard way to reject invalid constructor arguments.
+    if (quantitySold > quantityBought) {
+      throw ArgumentError.value(
+        quantityBought,
+        'quantityBought',
+        'Quantity being sold: $quantitySold can not exceed the quantity that was bought: $quantityBought',
       );
     }
-    return revenue(
-      sellingPrice: _sellingPrice,
-      quantityBought: _quantityBought,
-      discount: _discount,
-    );
+    if (discount > 100) {
+      throw ArgumentError.value(
+        discount,
+        'discount',
+        'Discount can not be greater than 100%. Discount: $discount',
+      );
+    } else {
+      _discount = discount;
+    }
+
+    if (quantityBought < 0) {
+      throw ArgumentError.value(
+        quantityBought,
+        'quantityBought',
+        'Quantity bought can not be negative. Quantity bought: $quantityBought',
+      );
+    } else {
+      _quantityBought = quantityBought;
+    }
+
+    if (sellingPrice < 0) {
+      throw ArgumentError.value(
+        sellingPrice,
+        'sellingPrice',
+        'Selling price can not be negative. Selling Price: $sellingPrice',
+      );
+    } else {
+      _sellingPrice = sellingPrice;
+    }
+
+    if (purchasingPrice < 0) {
+      throw ArgumentError.value(
+        purchasingPrice,
+        'purchasingPrice',
+        'Purchasing price can not be negative. Purchasing Price: $purchasingPrice',
+      );
+    } else {
+      _purchasingPrice = purchasingPrice;
+    }
+
+    if (quantitySold < 0) {
+      throw ArgumentError.value(
+        quantitySold,
+        'quantity sold',
+        'Quantity sold can not be negative. Quantity sold: $quantitySold',
+      );
+    } else {
+      _quantitySold = quantitySold;
+    }
   }
 
-  double get costOfGoodsSold => costOfQuantitySold(
+  late final String _businessName;
+  late final String _productName;
+  late final double _sellingPrice;
+  late final double _purchasingPrice;
+  late final int _quantityBought;
+  late final int _quantitySold;
+  late final double _discount;
+
+  // Financial Calculators
+
+  double get totalSalesRevenue => salesRevenue(
     sellingPrice: _sellingPrice,
+    discount: _discount,
     quantitySold: _quantitySold,
   );
 
-  double get grossProfit => salesRevenue - totalCost;
+  double get cogs => _purchasingPrice * _quantitySold;
 
-  String get profitType {
-    String profit = "Business is profitable";
-    if (grossProfit < 0) {
-      profit = "Loss";
-      return profit;
-    } else if (grossProfit == 0) {
-      profit = "Break-Even";
-      return profit;
-    } else {
-      return profit;
-    }
-  }
-
-  double get grossMargin => (grossProfit / salesRevenue) * 100;
-
-  double get discountFee => discount(
-    sellingPrice: _sellingPrice,
-    quantityBought: _quantityBought,
-    discount: _discount,
-  );
-
-  @override
-  String toString() {
-    return 'Business("Business Name":$_businessName,"Product Name":$_productName,"Total Cost":Mwk ${totalCost.toStringAsFixed(2)},"Revenue":Mwk ${salesRevenue.toStringAsFixed(2)},"Cost of goods sold":Mwk ${costOfGoodsSold.toStringAsFixed(2)},"Gross Profit":MWk ${grossProfit.toStringAsFixed(2)},"Gross profit margin":${grossMargin.toStringAsFixed(2)}%, "Discount fee": Mwk ${discountFee.toStringAsFixed(2)}, "Profit-type":$profitType';
-  }
+  double get grossProfit => totalSalesRevenue - cogs;
 }
