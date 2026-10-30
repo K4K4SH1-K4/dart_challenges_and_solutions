@@ -91,4 +91,11 @@ class Business {
   double get cogs => _purchasingPrice * _quantitySold;
 
   double get grossProfit => totalSalesRevenue - cogs;
+
+  double get grossProfitMargin => (grossProfit / totalSalesRevenue) * 100;
+
+  @override
+  String toString() {
+    return 'Business("Business Name":$_businessName, "Product Name":$_productName, "Total Sales Revenue": Mwk ${totalSalesRevenue.toStringAsFixed(2)}, "Cost of goods sold": Mwk ${cogs.toStringAsFixed(2)}, "Gross Profit":Mwk ${grossProfit.toStringAsFixed(2)}, "Gross Profit Margin": ${grossProfitMargin.toStringAsFixed(2)}%)';
+  }
 }
